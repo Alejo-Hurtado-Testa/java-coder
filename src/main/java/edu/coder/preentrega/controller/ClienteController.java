@@ -3,7 +3,9 @@ package edu.coder.preentrega.controller;
 import edu.coder.preentrega.entidades.Cliente;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import edu.coder.preentrega.service.ClienteService;
 
@@ -28,6 +30,17 @@ public class ClienteController {
     @GetMapping(path = "/buscar/{id}", produces = {MediaType.APPLICATION_JSON_VALUE}) // Creamos ruta mapeando GET pasando por URI
     public Optional<Cliente> traerCliente(@PathVariable Long id) { // Sacamos de la URI el id y se lo pasamos como parametro a traerCliente()
         return clienteService.traerCliente(id); // Retornamos los argumentos para que busque
+    }
+
+    @DeleteMapping(path = "/eliminar/{id}")
+    public ResponseEntity<String> eliminarCliente(@PathVariable Long id) {
+        Optional<Cliente> cliente = clienteService.traerCliente(id); // Traemos el cliente solicitado
+        if (cliente.isPresent()) {
+            clienteService.eliminarCliente(id);
+            return ResponseEntity.ok("Cliente eliminado correctamente"); // Retornamos una respuesta OK en caso de que el cliente haya sido eliminado
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("El cliente con ID " + id + " no existe.");
+        }
     }
 
 }

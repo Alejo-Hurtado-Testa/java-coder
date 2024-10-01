@@ -4,7 +4,9 @@ import edu.coder.preentrega.entidades.Productos;
 import edu.coder.preentrega.service.ProductosService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Optional;
@@ -27,6 +29,17 @@ public class ProdController {
     @GetMapping(path = "/buscarprod/{id}", produces = {MediaType.APPLICATION_JSON_VALUE})
     public Optional<Productos> buscarProducto(@PathVariable long id) {
         return productosService.buscarProducto(id);
+    }
+
+    @DeleteMapping(path = "/eliminarprod/{id}")
+    public ResponseEntity<String> eliminarCliente(@PathVariable Long id) {
+        Optional<Productos> productos = productosService.buscarProducto(id); // Traemos el producto con su id
+        if (productos.isPresent()) { // Si el producto esta presente, lo trae y lo eliminamos
+            productosService.eliminarProducto(id);
+            return ResponseEntity.ok("Producto eliminado correctamente"); // Retornamos una respuesta OK en caso de que el cliente haya sido eliminado
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("El producto con ID " + id + " no existe.");
+        }
     }
 
 
